@@ -17,4 +17,5 @@ mongo_collection = mongo_db.collection
 
 # Establish Elasticsearch connection
 connections.configure(**ELASTICSEARCH_CONNECTIONS)
-es = Elasticsearch(connections.get_connection(alias='default'))
+es = connections.get_connection(alias='default')
+print(type(es))

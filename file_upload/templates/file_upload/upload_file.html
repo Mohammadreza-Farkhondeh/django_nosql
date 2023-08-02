@@ -1,9 +1,8 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>File Upload Page</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Upload Page{% endblock %}
+
+{% block content %}
     <h1>File Upload Page</h1>
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
@@ -12,5 +11,4 @@
         <input type="radio" name="save_option" value="elasticsearch"> Save to Elasticsearch<br>
         <button type="submit">Upload and Save</button>
     </form>
-</body>
-</html>
+{% endblock %}

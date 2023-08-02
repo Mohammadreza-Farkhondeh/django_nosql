@@ -1,11 +1,11 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>CRUD Page</title>
-</head>
-<body>
+{% extends "base.html" %}
+
+{% block title %}Upload Page{% endblock %}
+
+{% block content %}
     <h1>CRUD Page</h1>
     <h3>Database: {{ db_type }}</h3>
+    {% block searchbar %}{% endblock %}
 
     <table border="1">
         <tr>
@@ -40,6 +40,4 @@
         {% endfor %}
         <button type="submit" name="create">Create</button>
     </form>
-
-</body>
-</html>
+{% endblock %}

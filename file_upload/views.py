@@ -2,10 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse
 
 from .utils import (process_uploaded_file,
-                    save_to_elasticsearch,
-                    save_to_mongodb,
+                    write_to_database,
                     save_to_database,
-                    get_data_from_database)
+                    get_data_from_database,
+                    perform_search)
 
 
 def upload_file(request):
@@ -21,10 +21,7 @@ def upload_file(request):
         save_option = request.POST.get('save_option', 'mongodb')  # default is mongodb
         request.session['db_type'] = save_option
 
-        if save_option == 'mongodb':
-            save_to_mongodb(data)
-        elif save_option == 'elasticsearch':
-            save_to_elasticsearch(data)
+        write_to_database(data, save_option)
 
         return HttpResponse("File uploaded successfully!")
 
@@ -44,6 +41,11 @@ def crud_page(request):
 
     data = get_data_from_database(db_type)
     fields = list(data[0].keys())
+
+    # Handle search query
+    query = request.GET.get('q', '').strip()
+    if query:
+        data = perform_search(query, data)
 
     if request.method == 'POST':
         if 'create' in request.POST:

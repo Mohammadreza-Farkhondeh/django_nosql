@@ -3,7 +3,7 @@
 {% block searchbar %}
 <form method="get">
     <label for="q">Search:</label>
-    <input type="text" name="q" value="{{ request.GET.q }}">
-    <button type="submit">Search</button>
+    <input type="text" name="q" value="{{ request.GET.q }}" style="margin-right: 10px;">
+    <button type="submit" style="background-color: #007bff; color: white; border: none; padding: 5px 10px;">Search</button>
 </form>
 {% endblock %}

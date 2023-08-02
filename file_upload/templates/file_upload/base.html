@@ -3,11 +3,20 @@
 
 <head>
     <title>{% block title %}django_nosql{% endblock %}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        #content {
+            margin: 20px;
+        }
+    </style>
 </head>
-</body>
-<div id="content">
-    {% block content %}{% endblock %}
-</div>
+
+<body>
+    <div id="content">
+        {% block content %}{% endblock %}
+    </div>
 </body>
 
 </html>

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.http import HttpResponse
+from persian_wordcloud.wordcloud import PersianWordCloud
 
 from .utils import (process_uploaded_file,
                     write_to_database,
@@ -80,3 +81,35 @@ def crud_page(request):
     fields = list(data[0].keys())
 
     return render(request, 'crud_page.html', {'data': data, 'fields': fields, 'db_type': db_type})
+
+
+def wordcloud_page(request):
+    """
+    Shows a wordcloud of the uploaded file data
+    db_type from "db_type" in request.session
+    """
+    db_type = request.session.get('db_type')
+    if db_type not in ['mongodb', 'elasticsearch']:
+        return HttpResponse("Invalid database type")
+
+    data = get_data_from_database(db_type)
+
+    wordcloud_data = {}
+    for field in data[0].keys():
+        values = [row[field] for row in data if field in row]
+        text = ' '.join(values)
+        persian_wordcloud = PersianWordCloud(
+                            # only_persian=True,
+                            max_words=120,
+                            margin=10,
+                            width=1920,
+                            height=1080,
+                            min_font_size=1,
+                            max_font_size=500,
+                            background_color="white",)
+        persian_wordcloud.generate(text)
+
+        # Convert the PersianWordCloud instance to an image
+        wordcloud_data[field] = persian_wordcloud.to_image()
+
+    return render(request, 'wordcloud_page.html', {'db_type': db_type, 'wordcloud_data': wordcloud_data})

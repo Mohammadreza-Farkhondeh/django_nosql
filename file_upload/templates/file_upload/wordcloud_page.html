@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block title %}WordCloud page{% endblock %}
+
+{% block content %}
+    <h1>Word Cloud Page</h1>
+    <h3>Database: {{ db_type }}</h3>
+
+    <h2 style="margin-top: 20px;">Word Clouds for All Fields</h2>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 20px;">
+        {% for field, wordcloud_img in wordcloud_data.items %}
+        <div style="text-align: center;">
+            <h3>{{ field }}</h3>
+            <img src="data:image/png;base64,{{ wordcloud_img }}" alt="Word Cloud" width="300" height="150"
+                style="border: 1px solid #ddd; padding: 5px;">
+        </div>
+        {% endfor %}
+    </div>
+
+    <a href="{% url 'crud_page' %}" style="display: block; margin-top: 20px;">Back to CRUD Page</a>
+{% endblock %}

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>CRUD Page</title>
+</head>
+<body>
+    <h1>CRUD Page</h1>
+    <h3>Database: {{ db_type }}</h3>
+
+    <table border="1">
+        <tr>
+            {% for field in fields %}
+            <th>{{ field }}</th>
+            {% endfor %}
+            <th>Actions</th>
+        </tr>
+        {% for row in data %}
+        <tr>
+            {% for field in fields %}
+            <td>{{ row[field] }}</td>
+            {% endfor %}
+            <td>
+                <form method="post">
+                    {% csrf_token %}
+                    <input type="hidden" name="row_id" value="{{ forloop.counter0 }}">
+                    <button type="submit" name="update">Update</button>
+                    <button type="submit" name="delete">Delete</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </table>
+
+    <h3>Create New Row:</h3>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in fields %}
+        <label for="{{ field }}">{{ field }}:</label>
+        <input type="text" name="{{ field }}" required><br>
+        {% endfor %}
+        <button type="submit" name="create">Create</button>
+    </form>
+
+</body>
+</html>

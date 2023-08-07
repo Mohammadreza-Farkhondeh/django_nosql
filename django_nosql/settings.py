@@ -85,6 +85,8 @@ USE_I18N = True
 USE_TZ = True
 
 STATIC_URL = 'static/'
+FILE_UPLOAD_MAX_MEMORY_SIZE = 0 # Save all files on disk
+
 
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

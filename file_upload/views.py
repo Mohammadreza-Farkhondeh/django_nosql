@@ -2,7 +2,9 @@ from django.shortcuts import render
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from django.shortcuts import get_object_or_404
-from persian_wordcloud.wordcloud import PersianWordCloud
+from wordcloud import WordCloud
+import io
+import base64
 
 from .models import UploadedFile
 from .utils import (process_uploaded_file,
@@ -30,7 +32,7 @@ def upload_file(request):
 
         write_to_database(data, file_id, save_option)
 
-        return HttpResponse(f'File uploaded successfully!, <a href="crud/{id}">CRUD page</a> and <a href="wordcloud/{id}">WordCloud page</a>' )
+        return HttpResponse(f'File uploaded successfully!, <a href="crud/{file_id}">CRUD page</a> and <a href="wordcloud/{file_id}">WordCloud page</a>' )
 
     return render(request, 'upload_file.html')
 
@@ -82,11 +84,11 @@ def crud_page(request, id):
 
             save_to_database(data, file_id, db_type)
 
-    fields = list(data[0].keys())
-
     paginator = Paginator(data, 10)
     page_number = request.GET.get('page', 1)
     page_obj = paginator.get_page(page_number)
+
+    fields = ['data', 'uploaded_at']
 
     return render(request, 'crud_page.html', {'page_obj': page_obj, 'fields': fields, 'db_type': db_type})
 
@@ -99,27 +101,25 @@ def wordcloud_page(request, id):
     uploaded_file_instance = get_object_or_404(UploadedFile, pk=id)
 
     db_type, file_id = uploaded_file_instance.db_type, uploaded_file_instance.id
-    
+
     if db_type not in ['mongodb', 'elasticsearch']:
         return HttpResponse("Invalid database type")
 
     data = get_data_from_database(file_id, db_type)
+    # print(data)
     wordcloud_data = {}
-    for field in data[0].keys():
-        values = [row[field] for row in data if field in row]
-        print(values)
-        text = ' '.join(values)
-        persian_wordcloud = PersianWordCloud(
-                            # only_persian=True,
-                            max_words=120,
-                            margin=10,
-                            width=1920,
-                            height=1080,
-                            min_font_size=1,
-                            max_font_size=500,
-                            background_color="white",)
-        persian_wordcloud.generate(text)
+    for field in data[0]['data'].keys():
+        try:
+            values = [row['data'][field] for row in data if field in row['data']]
+            text = ' '.join(values)
 
-        # Convert the PersianWordCloud instance to an image
-        wordcloud_data[field] = persian_wordcloud.to_image()
+            wordcloud = WordCloud().generate(text)
+            # Convert the PersianWordCloud instance to an image
+            image = wordcloud.to_image()
+            buffer = io.BytesIO()
+            image.save(buffer, format="PNG")
+            wordcloud_data[field] = base64.b64encode(buffer.getvalue()).decode()
+        except Exception as err:
+            print(err)
+
     return render(request, 'wordcloud_page.html', {'db_type': db_type, 'wordcloud_data': wordcloud_data})

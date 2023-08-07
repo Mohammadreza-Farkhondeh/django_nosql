@@ -17,14 +17,16 @@ def upload_file(request):
     """
     if request.method == 'POST' and request.FILES.get('file'):
         uploaded_file = request.FILES['file']
-        data = process_uploaded_file(uploaded_file)
+        file = uploaded_file
+        file_extension = uploaded_file.name.split('.')[-1]
+        data = process_uploaded_file(file, file_extension)
 
         save_option = request.POST.get('save_option', 'mongodb')  # default is mongodb
         request.session['db_type'] = save_option
 
         write_to_database(data, save_option)
 
-        return HttpResponse("File uploaded successfully!")
+        return HttpResponse('File uploaded successfully!, <a href="crud/">CRUD page</a>')
 
     return render(request, 'upload_file.html')
 
@@ -42,11 +44,10 @@ def crud_page(request):
 
     data = get_data_from_database(db_type)
     fields = list(data[0].keys())
-
     # Handle search query
     query = request.GET.get('q', '').strip()
     if query:
-        data = perform_search(query, data)
+        data = perform_search(query, db_type)
 
     if request.method == 'POST':
         if 'create' in request.POST:

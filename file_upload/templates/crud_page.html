@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load template_filters %}
 
 {% block title %}CRUD Page{% endblock %}
 
@@ -10,6 +11,15 @@
         <label for="q">Search:</label>
         <input type="text" name="q" value="{{ request.GET.q }}">
         <button type="submit">Search</button>
+    </form>
+    <h3>Create New Row:</h3>
+    <form method="post">
+        {% csrf_token %}
+        {% for field in fields %}
+        <label for="{{ field }}">{{ field }}:</label>
+        <input type="text" name="{{ field }}" required><br>
+        {% endfor %}
+        <button type="submit" name="create">Create</button>
     </form>
     {% endblock %}
 
@@ -23,7 +33,7 @@
         {% for row in data %}
         <tr>
             {% for field in fields %}
-            <td style="padding: 10px; border: 1px solid #dddddd;">{{ row[field] }}</td>
+            <td style="padding: 10px; border: 1px solid #dddddd;">{{ row|get_item:field }}</td>
             {% endfor %}
             <td style="padding: 10px; border: 1px solid #dddddd;">
                 <form method="post">
@@ -37,13 +47,5 @@
         {% endfor %}
     </table>
 
-    <h3>Create New Row:</h3>
-    <form method="post">
-        {% csrf_token %}
-        {% for field in fields %}
-        <label for="{{ field }}">{{ field }}:</label>
-        <input type="text" name="{{ field }}" required><br>
-        {% endfor %}
-        <button type="submit" name="create">Create</button>
-    </form>
+
 {% endblock %}

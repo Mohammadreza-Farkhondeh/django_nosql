@@ -45,6 +45,9 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
             ],
+            'libraries':{
+                    'template_filters': 'django_nosql.template_filters',
+                }
         },
     },
 ]

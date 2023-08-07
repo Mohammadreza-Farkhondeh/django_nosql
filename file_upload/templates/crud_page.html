@@ -30,7 +30,7 @@
             {% endfor %}
             <th style="padding: 10px; border: 1px solid #dddddd;">Actions</th>
         </tr>
-        {% for row in data %}
+        {% for row in page_obj %}
         <tr>
             {% for field in fields %}
             <td style="padding: 10px; border: 1px solid #dddddd;">{{ row|get_item:field }}</td>
@@ -47,5 +47,24 @@
         {% endfor %}
     </table>
 
+    <div class="pagination">
+        <span class="step-links">
+            {% if page_obj.has_previous %}
+                <a href="?page=1">« first</a>
+
+                <a href="?page={{ page_obj.previous_page_number }}">previous</a>
+            {% endif %}
+
+            <span class="current">
+                Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}.
+            </span>
+
+            {% if page_obj.has_next %}
+                <a href="?page={{ page_obj.next_page_number }}">next</a>
+
+                <a href="?page={{ page_obj.paginator.num_pages }}">last »</a>
+            {% endif %}
+        </span>
+    </div>
 
 {% endblock %}

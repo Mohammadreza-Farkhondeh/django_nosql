@@ -7,6 +7,3 @@ class FileDataDocument(Document):
 
     class Index:
         name = 'filedata'
-
-
-FileDataDocument.init()

@@ -1,9 +1,12 @@
-from elasticsearch_dsl import Document, Text, Date
+from elasticsearch_dsl import Document, Object, Date
 
 
 class FileDataDocument(Document):
-    data = Text()
+    data = Object()
     uploaded_at = Date()
 
     class Index:
         name = 'filedata'
+
+
+FileDataDocument.init()

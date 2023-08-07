@@ -14,7 +14,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-RUN sed -i 's/\r$//g' /start \
-    && chmod +x /start
-
 EXPOSE 8000
